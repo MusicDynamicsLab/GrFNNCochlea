@@ -1,0 +1,179 @@
+
+\documentclass{report}
+%\usepackage{extsizes}
+%\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,cite}
+%\usepackage{graphicx,subcaption}
+%\usepackage[labelfont=bf]{caption}
+\usepackage[portrait,top=0.8in,bottom=1in,left=1in,right=1in]{geometry}
+
+
+
+
+
+% I found this sqrt code and I like the way the radical appears better. If it gives you any problems just comment it out. -Karl
+
+% New definition of square root:
+% it renames \sqrt as \oldsqrt
+\let\oldsqrt\sqrt
+% it defines the new \sqrt in terms of the old one
+\def\sqrt{\mathpalette\DHLhksqrt}
+\def\DHLhksqrt#1#2{%
+	\setbox0=\hbox{$#1\oldsqrt{#2\,}$}\dimen0=\ht0
+	\advance\dimen0-0.2\ht0
+	\setbox2=\hbox{\vrule height\ht0 depth -\dimen0}%
+	{\box0\lower0.4pt\box2}}
+
+
+
+
+
+
+
+
+\begin{document}
+	
+	The purpose of this report is to show how to obtain an expression for $F$, the amplitude of sinusoidal forcing, such that a given threshold steady-state amplitude of a Hopf oscillator is achieved in a system of two oscillators. In this system, the forcing is given to a frequency-scaled linear oscillator which is connected with unilateral coupling to a frequency-scaled Hopf oscillator. The linear oscillator is intended to represent a place on the basilar membrane (BM), and the Hopf oscillator is intended to represent an amplifying bundle of outer hair cells on the organ of Corti (OC). This expression for $F$ will be obtained as a function of the oscillator and input parameters in the following system of two oscillators:
+	\begin{align}\label{zbmComp}
+		\tau \dot{z}_{bm}&=z_{bm}\mu_{bm}+Fe^{\textrm{i}2\pi f_0t}\\\label{zocComp}
+		\tau \dot{z}_{oc}&=z_{oc}(\mu_{oc}+\xi|z_{oc}|^2)+Az_{bm}
+	\end{align}
+	where
+	\begin{align*}
+		\tau&\in\mathbb{R}=1/f\\
+		f&\in\mathbb{R}\textrm{ is the natural frequency of the oscillators}\\
+		z_{bm}&\in\mathbb{C}\textrm{ is the state of the BM oscillator}\\
+		z_{oc}&\in\mathbb{C}\textrm{ is the state of the OC oscillator}\\
+		\{\mu_{bm},\mu_{oc},\xi\}&\in\mathbb{C}\textrm{ are parameters of the oscillators}\\
+		f_0&\in\mathbb{R}\textrm{ is the frequency of the stimulus}\\
+		A&\in\mathbb{R}\textrm{ is the connectivity coefficient from BM to OC}\\
+		F&\in\mathbb{R}\textrm{ is the forcing amplitude of the stimulus}
+	\end{align*}\\\\
+	To prepare for a polar transformation of equations \eqref{zbmComp} and \eqref{zocComp}, we can separate the real and imaginary parts of the parameters thus:
+	\begin{align}
+		\tau \dot{z}_{bm}&=z_{bm}(\alpha_{bm}+\textrm{i}2\pi)+Fe^{\textrm{i}2\pi f_0t}\\\label{zoc}
+		\tau \dot{z}_{oc}&=z_{oc}(\alpha_{oc}+\textrm{i}2\pi+(\beta+\textrm{i}\delta)|z_{oc}|^2)+Az_{bm}
+	\end{align}
+	with $\{\alpha_{bm}, \alpha_{oc}, \beta, \delta\}\in\mathbb{R}$. We will now begin obtaining an expression for the steady-state amplitude $r^{*}_{bm}$ of the linear oscillator $z_{bm}$. This expression will enable us to solve for $F$ in the $z_{oc}$ equation. We begin with the fact that $z=re^{\textrm{i}\phi}$ where $\{r, \phi\}\in\mathbb{R}$ are amplitude and phase, respectively. Using the product rule for differentiation,
+	\begin{align}\label{prodRule}
+		\dot{z}=\dot{r}e^{\textrm{i}\phi}+r\textrm{i}\dot{\phi}e^{\textrm{i}\phi}
+	\end{align}
+	so that
+	\begin{align*}
+		e^{\textrm{i}\phi_{bm}}(\dot{r}_{bm}+\textrm{i}r_{bm}\dot{\phi}_{bm})=\{r_{bm}e^{\textrm{i}\phi_{bm}}(\alpha_{bm}+\textrm{i}2\pi)+Fe^{\textrm{i}2\pi f_0t}\}f
+	\end{align*}
+	Simplifying,
+	\begin{align*}
+		\dot{r}_{bm}+\textrm{i}r_{bm}\dot{\phi}_{bm}=\{r_{bm}(\alpha_{bm}+\textrm{i}2\pi)+Fe^{\textrm{i}(2\pi f_0t-\phi_{bm})}\}f
+	\end{align*}
+	Separating the real and imaginary parts to transform to polar coordinates, and using Euler's formula $e^{\textrm{i}x}=\cos{x}+\textrm{i}\sin{x}$, we have
+	\begin{align*}
+		\dot{r}_{bm}&=f\alpha_{bm} r_{bm}+fF\cos(2\pi f_0t-\phi_{bm})\\
+		\dot{\phi}_{bm}&=2\pi f+\frac{fF}{r_{bm}}\sin(2\pi f_0t-\phi_{bm})
+	\end{align*}
+	We can define a phase difference $\psi_{bm}=\phi_{bm}-2\pi f_0t$ so that
+	\begin{align}\label{psidotbmDef}
+		\dot{\psi}_{bm}=\dot{\phi}_{bm}-2\pi f_0=2\pi f-2\pi f_0+\frac{fF}{r_{bm}}\sin(-\psi)
+	\end{align}
+	We can then define $\Omega=2\pi(f-f_0)$, and use the properties $\sin(-x)=-\sin(x)$ and $\cos(-x)=\cos(x)$ to get our revised system of equations:
+	\begin{align}\label{rdotbm}
+		\dot{r}_{bm}&=f\alpha_{bm}r_{bm}+fF\cos(\psi_{bm})\\\label{psidotbm}
+		\dot{\psi}_{bm}&=\Omega-\frac{fF}{r_{bm}}\sin(\psi_{bm})
+	\end{align}
+	With $r_{bm}^*$ the steady-state amplitude of the BM oscillator and $\psi_{bm}^*$ the steady-state phase difference between the BM oscillator and the input sinusoid, we have the following steady-state equations:
+	\begin{align}\label{rbmss}
+		0&=\alpha_{bm}r_{bm}^*+F\cos(\psi_{bm}^*)\\\label{psibmss}
+		0&=\Omega-\frac{fF}{r_{bm}^*}\sin(\psi_{bm}^*)
+	\end{align}
+	We must now find a way to eliminate $\psi_{bm}^*$ if we want to solve for $r_{bm}^*$ independently. Using the property $\sin^2(x)+\cos^2(x)=1$, we know that
+	\begin{align}\label{switchcos}
+		\cos(\psi_{bm}^*)=\sqrt{1-\sin^2(\psi_{bm}^*)}
+	\end{align}
+	as long as $\cos(\psi_{bm}^*)\geq0$. We know also from equation \eqref{psibmss} that
+	\begin{align}\label{sinpsistar}
+		\sin{\psi_{bm}^*}=\frac{r_{bm}^*\Omega}{fF}
+	\end{align}
+	Plugging in the equality from \eqref{sinpsistar} into \eqref{switchcos} and plugging that equality into \eqref{rbmss} we have an identity independent from $\psi_{bm}^*$:
+	\begin{align*}
+		0=\alpha_{bm}r_{bm}^*+F\sqrt{1-\left(\frac{r_{bm}^*\Omega}{fF}\right)^2}
+	\end{align*}
+	Rearranging terms and squaring both sides,
+	\begin{align*}
+		\left(\frac{\alpha_{bm}r_{bm}^*}{F}\right)^2=1-\left(\frac{r_{bm}^*\Omega}{fF}\right)^2
+	\end{align*}
+	It is now apparent that we can solve for $r_{bm}^*$. Skipping some intermediate steps, we reach an expression with only one $r_{bm}^*$:
+	\begin{align*}
+		\alpha_{bm}^2=\frac{F^2}{r_{bm}^{*2}}-\frac{\Omega^2}{f^2}
+	\end{align*}
+	Rearranging terms, we reach a formula for $r_{bm}^*$:
+	\begin{align}\label{rstarbm}
+		\frac{F}{\sqrt{\alpha_{bm}^2+\left(\frac{\Omega}{f}\right)^2}}=r_{bm}^*
+	\end{align}\\\\
+	We now turn back to equation \eqref{zoc} for the Hopf oscillator receiving input from $z_{bm}$. Again using \eqref{prodRule}, \eqref{zoc} becomes
+	\begin{align*}
+		e^{\textrm{i}\phi_{oc}}(\dot{r}_{oc}+\textrm{i}r\dot{\phi}_{oc})=\{r_{oc}e^{\textrm{i}\phi_{oc}}(\alpha_{oc}+\textrm{i}2\pi+(\beta+\textrm{i}\delta)|r_{oc}e^{\textrm{i}\phi_{oc}}|^2)+Ar_{bm}e^{\textrm{i}\phi_{bm}}\}f
+	\end{align*}
+	Simplifying,
+	\begin{align*}
+		\dot{r}_{oc}+\textrm{i}r_{oc}\dot{\phi}_{oc}=fr_{oc}\alpha_{oc}+\textrm{i}fr_{oc}2\pi+f\beta r_{oc}^3+\textrm{i}f\delta r_{oc}^3+fAr_{bm}e^{\textrm{i}(\phi_{bm}-\phi_{oc})}
+	\end{align*}
+	Separating the real and imaginary parts and again using Euler's formula,
+	\begin{align}
+		\dot{r}_{oc}&=fr_{oc}\alpha_{oc}+f\beta r_{oc}^3+fAr_{bm}\cos(\phi_{bm}-\phi_{oc})\\\label{phidotoc}
+		\dot{\phi}_{oc}&=2\pi f+f\delta r_{oc}^2+\frac{fAr_{bm}}{r_{oc}}\sin(\phi_{bm}-\phi_{oc})
+	\end{align}
+	We then again define a phase difference, this time between the two oscillators, $\psi_{oc}=\phi_{oc}-\phi_{bm}$, so that $\dot{\psi}_{oc}=\dot{\phi}_{oc}-\dot{\phi}_{bm}$. By equation \eqref{psidotbmDef} we know then that 
+	\begin{align*}
+		\dot{\psi}_{oc}=2\pi f+f\delta r_{oc}^2-\frac{fAr_{bm}}{r_{oc}}\sin(\psi_{oc})-2\pi f_0
+	\end{align*}
+	and we note the presence of $\Omega=2\pi(f-f_0)$ here as well, so our revised system of equations is
+	\begin{align*}
+		\dot{r}_{oc}&=fr_{oc}\alpha_{oc}+f\beta r_{oc}^3+fAr_{bm}\cos(\psi_{oc})\\
+		\dot{\psi}_{oc}&=\Omega+f\delta r_{oc}^2-\frac{fAr_{bm}}{r_{oc}}\sin(\psi_{oc})
+	\end{align*}
+	Thus our steady-state equations are
+	\begin{align}\label{rocss}
+		0&=r_{oc}^*\alpha_{oc}+\beta r_{oc}^{*3}+Ar_{bm}^*\cos(\psi_{oc}^*)\\\label{psiocss}
+		0&=\frac{\Omega}{f}+\delta r_{oc}^{*2}-\frac{Ar_{bm}^*}{r_{oc}^*}\sin(\psi_{oc}^*)
+	\end{align}
+	If we rearrange \eqref{psiocss} and again utilize the property $\sin^2(x)+\cos^2(x)=1$, we get
+	\begin{align*}
+		\cos{\psi_{oc}^*}=\sqrt{1-\left(\frac{r_{oc}^*\left(\frac{\Omega}{f}\right)+\delta r_{oc}^{*3}}{Ar_{bm}^*}\right)^2}
+	\end{align*}
+	and our new single steady-state equation, having eliminated $\psi_{oc}^*$, is
+	\begin{align*}
+		0=r_{oc}^*\alpha_{oc}+\beta r_{oc}^{*3}+Ar_{bm}^*\sqrt{1-\left(\frac{r_{oc}^*\left(\frac{\Omega}{f}\right)+\delta r_{oc}^{*3}}{Ar_{bm}^*}\right)^2}
+	\end{align*}
+	We will move step by step from here to the end, to be explicit. We have our formula \eqref{rstarbm} for $r_{bm}^*$, but first we simplify a bit. We move the first two terms to the other side and then square both sides,
+	\begin{align*}
+		r_{oc}^{*2}\alpha_{oc}^2+2r_{oc}^{*4}\alpha_{oc}\beta+r_{oc}^{*6}\beta^2=A^2r_{bm}^{*2}\left(1-\frac{\left(r_{oc}^*\left(\frac{\Omega}{f}\right)+\delta r_{oc}^{*3}\right)^2}{A^2r_{bm}^{*2}}\right)
+	\end{align*}
+	multiply $A^2r_{bm}^{*2}$ into the parentheses, and cancel factors:
+	\begin{align*}
+		r_{oc}^{*2}\alpha_{oc}^2+2r_{oc}^{*4}\alpha_{oc}\beta+r_{oc}^{*6}\beta^2=A^2r_{bm}^{*2}-\left(r_{oc}^*\left(\frac{\Omega}{f}\right)+\delta r_{oc}^{*3}\right)^2
+	\end{align*}
+	At this point we plug in the formula for $r_{bm}^*$ from \eqref{rstarbm} to solve for $F$:
+	\begin{align*}
+		r_{oc}^{*2}\alpha_{oc}^2+2r_{oc}^{*4}\alpha_{oc}\beta+r_{oc}^{*6}\beta^2=\frac{A^2F^2}{\left(\alpha_{bm}^2+\left(\frac{\Omega}{f}\right)^2\right)}-\left(r_{oc}^*\left(\frac{\Omega}{f}\right)+\delta r_{oc}^{*3}\right)^2
+	\end{align*}
+	Adding the last term to both sides and expanding it,
+	\begin{align*}
+		r_{oc}^{*2}\alpha_{oc}^2+2r_{oc}^{*4}\alpha_{oc}\beta+r_{oc}^{*6}\beta^2+\frac{\Omega^2r_{oc}^{*2}}{f^2}+\frac{2\Omega\delta r_{oc}^{*4}}{f}+\delta^2r_{oc}^{*6}=\frac{A^2F^2}{\left(\alpha_{bm}^2+\left(\frac{\Omega}{f}\right)^2\right)}
+	\end{align*}
+	Solving for $F$, we then obtain the lengthy expression
+	\begin{align*}
+		\frac{\sqrt{\left(\alpha_{bm}^2+\left(\frac{\Omega}{f}\right)^2\right)\left(r_{oc}^{*2}\alpha_{oc}^2+2r_{oc}^{*4}\alpha_{oc}\beta+r_{oc}^{*6}\beta^2+\frac{\Omega^2r_{oc}^{*2}}{f^2}+\frac{2\Omega\delta r_{oc}^{*4}}{f}+\delta^2r_{oc}^{*6}\right)}}{A}=F
+	\end{align*}
+	Simplifying slightly by removing an $r_{oc}^*$ from the radical and grouping terms, we obtain a final solution for $F$:
+	\begin{align}\label{F}
+		\frac{r_{oc}^*\sqrt{\alpha_{bm}^2+\left(\frac{\Omega}{f}\right)^2}\sqrt{(\beta^2+\delta^2)r_{oc}^{*4}+2\left(\delta\left(\frac{\Omega}{f}\right)+\alpha_{oc}\beta\right)r_{oc}^{*2}+\alpha_{oc}^2+\left(\frac{\Omega}{f}\right)^2}}{A}=F
+	\end{align}
+	
+	
+	
+	
+	
+	
+	
+	
+\end{document}

@@ -1,0 +1,50 @@
+
+\documentclass{report}
+%\usepackage{extsizes}
+%\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,cite}
+%\usepackage{graphicx,subcaption}
+%\usepackage[labelfont=bf]{caption}
+\usepackage[portrait,top=0.8in,bottom=1in,left=1in,right=1in]{geometry}
+
+
+
+
+
+% I found this sqrt code and I like the way the radical appears better. If it gives you any problems just comment it out. -Karl
+
+% New definition of square root:
+% it renames \sqrt as \oldsqrt
+\let\oldsqrt\sqrt
+% it defines the new \sqrt in terms of the old one
+\def\sqrt{\mathpalette\DHLhksqrt}
+\def\DHLhksqrt#1#2{%
+	\setbox0=\hbox{$#1\oldsqrt{#2\,}$}\dimen0=\ht0
+	\advance\dimen0-0.2\ht0
+	\setbox2=\hbox{\vrule height\ht0 depth -\dimen0}%
+	{\box0\lower0.4pt\box2}}
+
+
+
+
+
+
+
+
+\begin{document}
+
+\begin{align*}
+	r_{bm}^*&=\frac{r_{oc}^*}{c_{21}}\sqrt{\Big(\alpha_{oc}+\beta r_{oc}^{*2}\Big)^2+\left(\frac{\Omega}{f}+\delta r_{oc}^{*2}\right)^2}\\\\
+	\sin(\psi_{oc}^*)&=\frac{r_{oc}^*\left(\frac{\Omega}{f}+\delta r_{oc}^{*2}\right)}{c_{21}r_{bm}^*}\\\\
+	\cos(\psi_{oc}^*)&=\sqrt{1-\Big(\sin(\psi_{oc}^*)\Big)^2}\\\\
+	F&=\sqrt{\Big(\alpha_{bm}r_{bm}^*+c_{12}r_{oc}^*\cos(\psi_{oc}^*)\Big)^2+\left(\frac{\Omega}{f}r_{bm}^*+c_{12}r_{oc}^*\sin(\psi_{oc}^*)\right)^2}
+\end{align*}
+	
+	
+	
+	
+	
+	
+	
+	
+\end{document}
