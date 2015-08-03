@@ -314,6 +314,10 @@ set(handles(18,1),   'Callback', {@text_CallbackTCNUM,  handles, ax});
 % set(handles(1:9,3),  'Callback', {@pushbutton_Callback,  handles, ax});
 set(pushbutton1,     'Callback', {@pushbutton1_Callback, handles});
 set(pushbutton2,     'Callback', {@pushbutton2_Callback, handles, ax});
+set(handles(19,1), 'Callback',{@toggle_Callback,handles,ax});
+set(handles(20,1), 'Callback',{@toggle_Callback,handles,ax});
+set(handles(21,1), 'Callback',{@toggle_Callback,handles,ax});
+set(handles(22,1), 'Callback',{@toggle_Callback,handles,ax});
 
 
 hold off
@@ -321,18 +325,90 @@ plotTC(tcnum, alphaoc, alphabm, beta1oc, delta, c21, c12, TCfreqshift, thresh, {
 
 
 
+% % =========================================================================
+% function toggle3_Callback(source, eventdata, handles, ax)
+% 
+% 
+% toggleValues    = get(handles(19:22,1), 'Value');
+% parameterValues = str2double(get(handles(10:18,1), 'String'));
+% 
+% plotTC(parameterValues(9), parameterValues(1), parameterValues(2), parameterValues(3), ...
+%     parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(8), parameterValues(7), toggleValues, ax)
+
+
+
+
+
+
 % =========================================================================
-function pushbutton_Callback(source, eventdata, handles, ax)
+function toggle_Callback(source, eventdata, handles, ax)
 
-[row,col] = find(handles == source);
-set(handles(row+9,1), 'String', num2str(get(source,'Value'), 3))
+% load('defaultparamsBMOC');
+defaultparamsBMOC = csvread('defaultparamsBMOC.csv');
+tcnum = get(handles(9,1),'Value');
+freqScaling    = get(handles(20,1), 'Value');
+threshOC       = get(handles(21,1), 'Value');
+singleCritical = get(handles(22,1), 'Value');
 
-toggleValues = get(handles(19:22,1), 'Value');
-% parameterValues  = get(handles(1:9,1),   'Value');
+if singleCritical
+    if freqScaling
+        params = defaultparamsBMOC(33:40,tcnum);
+    else
+        params = defaultparamsBMOC(41:48,tcnum);
+    end
+else
+    
+    if threshOC
+        if freqScaling
+            params = defaultparamsBMOC(1:8, tcnum);
+        else
+            params = defaultparamsBMOC(9:16,tcnum);
+        end
+    else
+        if freqScaling
+            params = defaultparamsBMOC(17:24, tcnum);
+        else
+            params = defaultparamsBMOC(25:32,tcnum);
+        end
+    end
+    
+end
+
+% set(handles(1,1),   'Value',  params(1));
+% set(handles(2,1),   'Value',  params(2));
+% set(handles(3,1),   'Value',  params(3));
+% set(handles(4,1),   'Value',  params(4));
+% set(handles(5,1),   'Value',  params(5));
+% set(handles(6,1),   'Value',  params(6));
+% set(handles(7,1),   'Value',  params(7));
+% set(handles(8,1),   'Value',  params(8));
+% set(handles(9,1),   'Value',  tcnum);
+% set(handles(10,1),  'String', num2str(get(handles(1,1),'Value'),3));
+% set(handles(11,1),  'String', num2str(get(handles(2,1),'Value'),3));
+% set(handles(12,1),  'String', num2str(get(handles(3,1),'Value'),3));
+% set(handles(13,1),  'String', num2str(get(handles(4,1),'Value'),3));
+% set(handles(14,1),  'String', num2str(get(handles(5,1),'Value'),3));
+% set(handles(15,1),  'String', num2str(get(handles(6,1),'Value'),3));
+% set(handles(16,1),  'String', num2str(get(handles(7,1),'Value'),3));
+% set(handles(17,1),  'String', num2str(get(handles(8,1),'Value'),3));
+set(handles(10,1),  'String', num2str(params(1),3));
+set(handles(11,1),  'String', num2str(params(2),3));
+set(handles(12,1),  'String', num2str(params(3),3));
+set(handles(13,1),  'String', num2str(params(4),3));
+set(handles(14,1),  'String', num2str(params(5),3));
+set(handles(15,1),  'String', num2str(params(6),3));
+set(handles(16,1),  'String', num2str(params(7),3));
+set(handles(17,1),  'String', num2str(params(8),3));
+set(handles(18,1),  'String', num2str(tcnum));
+
+toggleValues    = get(handles(19:22,1), 'Value');
+% parameterValues = get(handles(1:9,1),   'Value');
 parameterValues = str2double(get(handles(10:18,1), 'String'));
+clear defaultparamsBMOC
 
-plotTC(parameterValues{9}, parameterValues{1}, parameterValues{2}, parameterValues{3}, ...
-    parameterValues{4}, parameterValues{5}, parameterValues{6}, parameterValues{8}, parameterValues{7}, toggleValues, ax)
+plotTC(parameterValues(9), parameterValues(1), parameterValues(2), parameterValues(3), ...
+    parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(8), parameterValues(7), toggleValues, ax)
+
 
 
 
