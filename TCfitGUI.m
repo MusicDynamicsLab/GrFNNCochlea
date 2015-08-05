@@ -1,14 +1,8 @@
 function TCfitGUI
 % function TCfitGUI
-% GUI for fiiting model tuning curves to empirical results.
+% GUI for fitting model tuning curves to empirical results.
 % Change parameter values by moving the sliders or by entering numbers
-% in the text boxes. Min and max for the sliders can also be changed.
-
-% clear all;
-% close all;
-% clc;
-
-%global MEFdBgains thresholds omegasquared f f0;
+% in the text boxes.
 
 figure(999);
 set(gcf, 'Visible', 'off', 'Toolbar', 'figure', 'Color', [.8 .8 .8], ...
@@ -24,17 +18,20 @@ function initialRun(source, eventdata)
 clf
 axis off;
 
-ax1 = axes('Units', 'normalized', 'Position', [ 50/1200  520/800 600/1200 240/800]);
-ax2 = axes('Units', 'normalized', 'Position', [ 50/1200  288/800 400/1200 160/800]);
-ax3 = axes('Units', 'normalized', 'Position', [ 50/1200   36/800 400/1200 160/800]);
-ax4 = axes('Units', 'normalized', 'Position', [520/1200  288/800 480/1200 160/800]);
-ax5 = axes('Units', 'normalized', 'Position', [520/1200   36/800 480/1200 160/800]);
-
+ax1 = axes('Units', 'normalized', 'Position', [.04 .65 .5 .3]);
+ax2 = axes('Units', 'normalized', 'Position', [725/1200  288/800 450/1200 160/800]);
+ax3 = axes('Units', 'normalized', 'Position', [725/1200   36/800 450/1200 160/800]);
+ax4 = axes('Units', 'normalized', 'Position', [ 50/1200  288/800 600/1200 160/800]);
+ax5 = axes('Units', 'normalized', 'Position', [ 50/1200   36/800 600/1200 160/800]);
 
 ax = [ax1 ax2 ax3 0 ax4 ax5];
 
+% hp2 = uipanel('Title','OC Compression Curves','FontSize',11,'FontName','Helvetica',...
+%   'BackgroundColor',[.8 .8 .8],'Position',[.04 .28 .50 .3]);
+% axes('Units','normalized','Position',get(hp2,'Position'))
+% axis off
 
-xlim(ax1, [20 20000]);
+xlim(ax1, [50 20000]);
 ylim(ax1, [0 100]);
 grid(ax1, 'on');
 ylabel(ax1, 'Threshold (dB SPL)');
@@ -59,16 +56,17 @@ title(ax5, 'BM Compression Curves: 0 - 120 dB SPL in 20 dB steps');
 
 defaultparamsBMOC = csvread('defaultparamsBMOC.csv');
 
-% Initial parameter values
+%% Initial parameter values
 tcnum       = 5;
 alphaoc     = defaultparamsBMOC(9,tcnum);
 alphabm     = defaultparamsBMOC(10,tcnum);
 beta1oc     = defaultparamsBMOC(11,tcnum);
-delta       = defaultparamsBMOC(12,tcnum);
+beta1bm     = 0;
+delta1oc    = defaultparamsBMOC(12,tcnum);
+delta1bm    = 0;
 c21         = defaultparamsBMOC(13,tcnum);
 c12         = defaultparamsBMOC(14,tcnum);
 thresh      = defaultparamsBMOC(15,tcnum);
-TCfreqshift = defaultparamsBMOC(16,tcnum);
 Lstim       = 0; % Stimulus/input level in dB SPL
 
 
@@ -78,71 +76,103 @@ clear defaultparamsBMOC
 TCnumLim   = [1 11];
 
 
+%% Make text boxes and labels for parameter input
+
+% Tuning curve slider, textbox, and label
+uicontrol('Style','text','String','Tuning Curve:',...
+    'BackgroundColor',[.8 .8 .8],'FontSize', 12,...
+    'FontUnits','normalized','Units', 'normalized',  'Position', [.71 .95 .07 .025]);
 slider1 = uicontrol('Style', 'slider', 'Min', 1, 'Max', 11, 'Value', tcnum, 'SliderStep', [.1 .1], ...
-    'Min', TCnumLim(1), 'Max', TCnumLim(2), 'Units', 'normalized', 'Position', [980/1200 704/800 200/1200 20/800]);
+    'Min', TCnumLim(1), 'Max', TCnumLim(2), 'Units', 'normalized', 'Position', [880/1200 738/800 200/1200 20/800]);
+text8 = uicontrol('Style','edit', 'String', tcnum,...
+    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [980/1200 760/800 56/1200 20/800]);
+
+% Panel for parameter input
+hp1 = uipanel('Title','Parameters','FontSize',11,'FontName','Helvetica',...
+  'BackgroundColor',[.8 .8 .8],'Position',[.64 .63 .35 .3]);
+axes('Units','normalized','Position',get(hp1,'Position'))
+axis off
+
+% Label and textbox for alpha_BM
+text(.12,.83,'$$\alpha_{bm}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+text2 = uicontrol('Parent',hp1,'Style','edit', 'String', alphabm,...
+    'FontSize',12,'Units', 'normalized','Position', [.13 .83 .14 .13]);
+% Label and textbox for beta_BM
+text(.12,.68,'$$\beta_{bm}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+handles.betabm = uicontrol('Parent',hp1,'Style','edit', 'String', beta1bm,...
+    'FontSize',12,'Units', 'normalized','Position', [.13 .68 .14 .13],'enable','inactive');
+% Label and textbox for delta_BM
+text(.12,.53,'$$\delta_{bm}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+handles.delta1bm = uicontrol('Parent',hp1,'Style','edit', 'String', delta1bm,...
+    'FontSize',12,'Units', 'normalized','Position', [.13 .53 .14 .13],'enable','inactive');
+
+% Label and textbox for alpha_OC
+text(.84,.82,'$$\alpha_{oc}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+text1 = uicontrol('Parent',hp1,'Style','edit', 'String', alphaoc,...
+    'FontSize',12,'Units', 'normalized','Position', [.85 .82 .14 .13]);
+% Label and textbox for beta_OC
+text(.84,.67,'$$\beta_{oc}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+text3 = uicontrol('Parent',hp1,'Style','edit', 'String', beta1oc,...
+    'FontSize',12,'Units', 'normalized','Position', [.85 .67 .14 .13]);
+% Label and textbox for delta_OC
+text(.84,.52,'$$\delta_{oc}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+text4 = uicontrol('Parent',hp1,'Style','edit', 'String', delta1oc,...
+    'FontSize',12,'Units', 'normalized','Position', [.85 .52 .14 .13]);
+
+% Label and texbox for c21
+text(.48,.67,'$$c_{21}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+text5 = uicontrol('Parent',hp1,'Style','edit', 'String', c21,...
+    'FontSize',12,'Units', 'normalized','Position', [.5 .67 .14 .13]);
+% Label and textbox for c12
+text(.48,.52,'$$c_{12}:$$','Interpreter','Latex',...
+  'HorizontalAlignment','right','VerticalAlignment','baseline',...
+  'Units','normalized','FontSize',15)
+text6 = uicontrol('Parent',hp1,'Style','edit', 'String', c12,...
+    'FontSize',12,'Units', 'normalized','Position', [.5 .52 .14 .13]);
+% Label and textbox for threshold
+text(.48,.39,'Threshold:','Interpreter', 'Latex',...
+    'HorizontalAlignment','right','VerticalAlignment','baseline',...
+    'Units','normalized','FontSize',15)
+text7 = uicontrol('Parent', hp1, 'Style','edit', 'String', thresh,...
+    'FontSize',12,'Units', 'normalized','Position', [.5 .38 .14 .13]);
+
+pushbutton1 = uicontrol('Parent', hp1, 'Style', 'pushbutton', 'String', {'Save as Default'},...
+    'FontUnits','normalized','Units', 'normalized',  'Position', [.64 .02 .35 .12]);
+pushbutton2 = uicontrol('Parent', hp1, 'Style', 'pushbutton', 'String', 'Choose c12',...
+    'FontUnits','normalized','Units', 'normalized',  'Position', [.75 .15 .2 .2]);
 
 
-text1 = uicontrol('Style','edit', 'String', alphaoc,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 600/800 56/1200 20/800]);
-text2 = uicontrol('Style','edit', 'String', alphabm,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 520/800 56/1200 20/800]);
-text3 = uicontrol('Style','edit', 'String', beta1oc,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 440/800 56/1200 20/800]);
-text4 = uicontrol('Style','edit', 'String', delta,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 360/800 56/1200 20/800]);
-text5 = uicontrol('Style','edit', 'String', c21,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 280/800 56/1200 20/800]);
-text6 = uicontrol('Style','edit', 'String', c12,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 200/800 56/1200 20/800]);
-text7 = uicontrol('Style','edit', 'String', thresh,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 120/800 56/1200 20/800]);
-text8 = uicontrol('Style','edit', 'String', TCfreqshift,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200  32/800 56/1200 20/800]);
-text9 = uicontrol('Style','edit', 'String', tcnum,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [1056/1200 680/800 56/1200 20/800]);
+toggle1 = uicontrol('Style','togglebutton', 'String','MEF',...
+    'Value', 1,'FontUnits','normalized','Units', 'normalized', 'Position', [0.57 0.925 0.042 0.025]);
 
+toggle2 = uicontrol('Style','togglebutton', 'String','Freq Scaling',...
+    'Value', 0,'FontUnits','normalized','Units', 'normalized', 'Position', [660/1200 700/800 100/1200 20/800]);
 
-toggle1 = uicontrol('Style','togglebutton', 'String','Middle ear filter On/Off',...
-    'Value', 1,'FontUnits','normalized','Units', 'normalized', 'Position', [660/1200 740/800 240/1200 20/800]);
+toggle3 = uicontrol('Style','togglebutton', 'String','OC==thresh',...
+    'Value', 1,'FontUnits','normalized','Units', 'normalized', 'Position', [660/1200 640/800 100/1200 20/800]);
 
-toggle2 = uicontrol('Style','togglebutton', 'String','Freq Scaling On/Off',...
-    'Value', 0,'FontUnits','normalized','Units', 'normalized', 'Position', [660/1200 680/800 240/1200 20/800]);
-
-toggle3 = uicontrol('Style','togglebutton', 'String','On for OC==thresh, off for BM==thresh',...
-    'Value', 1,'FontUnits','normalized','Units', 'normalized', 'Position', [660/1200 620/800 240/1200 20/800]);
-
-toggle4 = uicontrol('Style','togglebutton', 'String','On for single oscillator model',...
-    'Value', 0,'FontUnits','normalized','Units', 'normalized', 'Position', [660/1200 560/800 240/1200 20/800]);
-
-
-label1 = uicontrol('Style','text','String', {'Alpha OC'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 620/800 80/1200 20/800]);
-label2 = uicontrol('Style','text','String', {'Alpha BM'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 540/800 80/1200 20/800]);
-label3 = uicontrol('Style','text','String', {'Beta'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 460/800 80/1200 20/800]);
-label4 = uicontrol('Style','text','String', {'Delta'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 380/800 80/1200 20/800]);
-label5 = uicontrol('Style','text','String', {'c21'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 300/800 80/1200 20/800]);
-label6 = uicontrol('Style','text','String', {'c12'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 220/800 80/1200 20/800]);
-label7 = uicontrol('Style','text','String', {'Threshold'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 140/800 80/1200 20/800]);
-label8 = uicontrol('Style','text','String', {'TC Freq. Shift (HZ)'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 60/800 80/1200 28/800]);
-label9 = uicontrol('Style','text','String', {'TC Number'},...
-    'BackgroundColor',[.8 .8 .9],'FontSize', 12,'FontUnits','normalized','Units', 'normalized',  'Position', [1040/1200 724/800 80/1200 20/800]);
-
-
-pushbutton1 = uicontrol('Style', 'pushbutton', 'String', 'Save as Default Params',...
-    'FontUnits','normalized','Units', 'normalized',  'Position', [660/1200 500/800 240/1200 20/800]);
-pushbutton2 = uicontrol('Style', 'pushbutton', 'String', 'Choose',...
-    'FontUnits','normalized','Units', 'normalized',  'Position', [1116/1200 200/800 62/1200 20/800]);
+toggle4 = uicontrol('Style','togglebutton', 'String','Single Osc',...
+    'Value', 0,'FontUnits','normalized','Units', 'normalized', 'Position', [660/1200 580/800 100/1200 20/800]);
 
 
 
-% Create an array of handles
+
+
+%% Create an array of handles
 
 handles = [ 0 0 0;
     0 0 0;
@@ -161,7 +191,7 @@ handles = [ 0 0 0;
     text6   0    0;
     text7   0    0;
     text8   0    0;
-    text9   0    0;
+    text8   0    0;
     toggle1 0    1;
     toggle2 0    1;
     toggle3 0    1;
@@ -174,14 +204,11 @@ set(handles(10:17,1), 'Callback', {@text_Callback,   handles, ax});
 set(handles(18,1),   'Callback', {@text_CallbackTCNUM,  handles, ax});
 set(pushbutton1,     'Callback', {@pushbutton1_Callback, handles});
 set(pushbutton2,     'Callback', {@pushbutton2_Callback, handles, ax});
-set(handles(19,1), 'Callback',{@toggle_Callback,handles,ax});
-set(handles(20,1), 'Callback',{@toggle_Callback,handles,ax});
-set(handles(21,1), 'Callback',{@toggle_Callback,handles,ax});
-set(handles(22,1), 'Callback',{@toggle_Callback,handles,ax});
+set(handles(19:22,1), 'Callback',{@toggle_Callback,handles,ax});
 
 
 hold off
-plotTC(tcnum, alphaoc, alphabm, beta1oc, delta, c21, c12, TCfreqshift, thresh, {1, 0, 1, 0}, ax);
+plotTC(tcnum, alphaoc, alphabm, beta1oc, delta1oc, c21, c12, thresh, {1, 0, 1, 0}, ax);
 
 
 % =========================================================================
@@ -232,7 +259,7 @@ parameterValues = str2double(get(handles(10:18,1), 'String'));
 clear defaultparamsBMOC
 
 plotTC(parameterValues(9), parameterValues(1), parameterValues(2), parameterValues(3), ...
-    parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(8), parameterValues(7), toggleValues, ax)
+    parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(7), toggleValues, ax)
 
 
 
@@ -305,7 +332,7 @@ if ~singleCritical
     parameterValues = str2double(get(handles(10:18,1), 'String'));
     
     plotTC(parameterValues(9), parameterValues(1), parameterValues(2), parameterValues(3), ...
-        parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(8), parameterValues(7), toggleValues, ax)
+        parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(7), toggleValues, ax)
 end
 
 
@@ -358,7 +385,7 @@ parameterValues = str2double(get(handles(10:18,1), 'String'));
 clear defaultparamsBMOC
 
 plotTC(parameterValues(9), parameterValues(1), parameterValues(2), parameterValues(3), ...
-    parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(8), parameterValues(7), toggleValues, ax)
+    parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(7), toggleValues, ax)
 
 
 
@@ -435,11 +462,25 @@ clear defaultparamsBMOC
 plotTC(parameterValues(9), parameterValues(1), parameterValues(2), parameterValues(3), ...
     parameterValues(4), parameterValues(5), parameterValues(6), parameterValues(8), parameterValues(7), toggleValues, ax)
 
+function showLegend(~,~)
+hf = figure;
+fpos = get(hf,'Position');
+
+set(hf,'Position',[fpos(1) fpos(2) 300 80])
+axes('Units','normalized','Position',[0 0 1 1]);
+axis off
+text('Interpreter','latex','String',...
+  ['$$z_i = r_ie^{\textrm{i}\phi_i}$$ and ' ...
+  '$$\psi = \phi_1 - \phi_2$$'],...
+	'Position',[.05 .8],'Units','normalized',...
+  'HorizontalAlignment','left','VerticalAlignment','top',...
+	'FontSize',15)
+
 
 
 % =========================================================================
 % =========================================================================
-function plotTC(tcnum, alphaoc, alphabm, beta1oc, delta, c21, c12, TCfreqshift, thresh, toggleValue, ax)
+function plotTC(tcnum, alphaoc, alphabm, beta1oc, delta, c21, c12, thresh, toggleValue, ax)
 
 % Load the Empirical Tuning Curve data.
 load('JorisTCdata.mat');
@@ -619,14 +660,14 @@ else               % Else not middle ear flitering
 end
 
 semilogx(ax(1), f0, thresholds, 'b.-', 'Linewidth', 2);  hold(ax(1), 'on');
-semilogx(ax(1), f0 + TCfreqshift, LstimStable,   'Color', [.2 .8 .2], 'LineWidth', 2, 'Marker', '.');
-semilogx(ax(1), f0 + TCfreqshift, LstimUnstable, 'Color', [.8 .2 .8], 'LineWidth', 2, 'Marker', '.');
+semilogx(ax(1), f0, LstimStable,   'Color', [.2 .8 .2], 'LineWidth', 2, 'Marker', '.');
+semilogx(ax(1), f0, LstimUnstable, 'Color', [.8 .2 .8], 'LineWidth', 2, 'Marker', '.');
 
 % semilogx(ax(1), f0, thresholds, 'b');  hold(ax(1), 'on');
 % semilogx(ax(1), f0 + TCfreqshift, LstimStable,   'Color', [.2 .8 .2], 'LineWidth', .9);
 % semilogx(ax(1), f0 + TCfreqshift, LstimUnstable, 'Color', [.8 .2 .8], 'LineWidth', .9);
 
-xlim(ax(1), [44.4 30000]);
+xlim(ax(1), [50 30000]);
 ylim(ax(1), [0 90]);
 grid(ax(1), 'on');
 ylabel(ax(1),'Threshold (dB SPL)');
@@ -765,7 +806,7 @@ set(ax(3), 'FontUnits','normalized');
 % OC & BM Compression Curves %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-f0sOrig = logspace(log10(20),log10(30000),201)';
+f0sOrig = logspace(log10(50),log10(30000),201)';
 temp    = f0sOrig - f;
 [~,ind] = min(abs(temp));
 f0s     = f0sOrig - temp(ind);
