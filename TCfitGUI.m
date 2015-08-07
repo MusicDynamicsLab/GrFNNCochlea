@@ -24,7 +24,7 @@ ax3 = axes('Units', 'normalized', 'Position', [725/1200   36/800 450/1200 160/80
 ax4 = axes('Units', 'normalized', 'Position', [ 50/1200  288/800 600/1200 160/800]);
 ax5 = axes('Units', 'normalized', 'Position', [ 50/1200   36/800 600/1200 160/800]);
 
-ax = [ax1 ax2 ax3 0 ax4 ax5];
+ax = [ax1 ax2 ax3 ax4 ax5];
 
 % hp2 = uipanel('Title','OC Compression Curves','FontSize',11,'FontName','Helvetica',...
 %   'BackgroundColor',[.8 .8 .8],'Position',[.04 .28 .50 .3]);
@@ -40,11 +40,12 @@ title(ax1, 'TC Fit');
 
 xlabel(ax2, 'F (Pa)');
 ylabel(ax2, 'r* of OC oscillator');
-title(ax2, {['Steady State Amplitude Curve for OC Oscillator.'], ['Blue @ f0 = CF = f, Green @ f0 = f/2,  Red @ f0 = 2f,  Black = rBM Threshold']});
+title(ax2, 'Steady State Amplitude Curve for OC Oscillator.');
+
 
 xlabel(ax3, 'Forcing F (Pa) = r* OC');
 ylabel(ax3, 'r* of BM oscillator');
-title(ax3, {['Steady State Amplitude Curve for BM Oscillator.'], ['Blue @ f0 = CF = f, Green @ f0 = f/2,  Red @ f0 = 2f,  Black = rBM Threshold']});
+title(ax3, 'Steady State Amplitude Curve for BM Oscillator.');
 
 xlabel(ax4, 'f_{0} (Hz)');
 ylabel(ax4, 'rOC^*');
@@ -144,9 +145,8 @@ text(.48,.52,'$$c_{12}:$$','Interpreter','Latex',...
 text6 = uicontrol('Parent',hp1,'Style','edit', 'String', c12,...
     'FontSize',12,'Units', 'normalized','Position', [.5 .52 .14 .13]);
 % Label and textbox for threshold
-text(.48,.39,'Threshold:','Interpreter', 'Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
+text(.48,.39,'Threshold:','HorizontalAlignment','right',...
+    'VerticalAlignment','baseline','Units','normalized','FontSize',15)
 text7 = uicontrol('Parent', hp1, 'Style','edit', 'String', thresh,...
     'FontSize',12,'Units', 'normalized','Position', [.5 .38 .14 .13]);
 
@@ -209,7 +209,10 @@ set(handles(19:22,1), 'Callback',{@toggle_Callback,handles,ax});
 
 hold off
 plotTC(tcnum, alphaoc, alphabm, beta1oc, delta1oc, c21, c12, thresh, {1, 0, 1, 0}, ax);
-
+legend(ax2, 'f0 = f/2', 'f0 = CF = f', 'f0 = 2f', 'rBM Threshold','Location','best');
+legend(ax3, 'f0 = f/2', 'f0 = CF = f', 'f0 = 2f','location','best');
+legend(ax4, '0 dB SPL', '20 dB SPL', '40 dB SPL', '60 dB SPL', '80 dB SPL', '100 dB SPL', '120 dB SPL');
+legend(ax5, '0 dB SPL', '20 dB SPL', '40 dB SPL', '60 dB SPL', '80 dB SPL', '100 dB SPL', '120 dB SPL');
 
 % =========================================================================
 function toggle_Callback(source, eventdata, handles, ax)
@@ -787,7 +790,7 @@ end
 
 xlabel(ax(2), 'Forcing F (dB SPL)');
 ylabel(ax(2), 'r* of OC oscillator');
-title(ax(2), {['Steady State Amplitude Curve for OC Oscillator.'], ['Blue @ f0 = CF = f, Green @ f0 = f/2,  Red @ f0 = 2f,  Black = Threshold']});
+title(ax(2), 'Steady State Amplitude Curve for OC Oscillator.');
 set(ax(2), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
 set(ax(2), 'FontUnits','normalized');
 
@@ -795,7 +798,7 @@ grid(ax(3), 'on');
 
 xlabel(ax(3), 'Forcing F (dB SPL)');
 ylabel(ax(3), 'r* of BM oscillator');
-title(ax(3), {['Steady State Amplitude Curve for BM Oscillator.'], ['Blue @ f0 = CF = f, Green @ f0 = f/2,  Red @ f0 = 2f']});
+title(ax(3), 'Steady State Amplitude Curve for BM Oscillator.');
 set(ax(3), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
 set(ax(3), 'FontUnits','normalized');
 
@@ -844,38 +847,38 @@ end
 
 if toggleValue{4}  % If single critical oscillator
     
-    loglog(ax(5), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(5), 'on');
-    loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(5), 'off');
-    loglog(ax(6), NaN);
+    loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
+    loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(4), 'off');
+    loglog(ax(5), NaN);
     
 else
     
     if toggleValue{3}  % If using OC as threshold
         
         if c21*c12
-            loglog(ax(6), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(6), 'on');
-            loglog(ax(6), [min(f0sOrig) max(f0sOrig)], [spontBM spontBM], 'm', 'Linewidth', 2);hold(ax(6), 'off');
-            loglog(ax(5), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(5), 'on');
-            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2);
-            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [spontOC spontOC], 'm', 'Linewidth', 2); hold(ax(5), 'off');
+            loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(5), 'on');
+            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [spontBM spontBM], 'm', 'Linewidth', 2);hold(ax(5), 'off');
+            loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
+            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2);
+            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [spontOC spontOC], 'm', 'Linewidth', 2); hold(ax(4), 'off');
         else
-            loglog(ax(6), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);
-            loglog(ax(5), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(5), 'on');
-            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(5), 'off');
+            loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);
+            loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
+            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(4), 'off');
         end
         
     else  % Else using BM as threshold
         
         if c21*c12
-            loglog(ax(6), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(6), 'on');
-            loglog(ax(6), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2);
-            loglog(ax(6), [min(f0sOrig) max(f0sOrig)], [spontBM spontBM], 'm', 'Linewidth', 2);hold(ax(6), 'off');
-            loglog(ax(5), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(5), 'on');
-            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [spontOC spontOC], 'm', 'Linewidth', 2); hold(ax(5), 'off');
+            loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(5), 'on');
+            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2);
+            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [spontBM spontBM], 'm', 'Linewidth', 2);hold(ax(5), 'off');
+            loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
+            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [spontOC spontOC], 'm', 'Linewidth', 2); hold(ax(4), 'off');
         else
-            loglog(ax(6), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(6), 'on');
-            loglog(ax(6), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(6), 'off');
-            loglog(ax(5), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2);
+            loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(5), 'on');
+            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(5), 'off');
+            loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2);
         end
         
     end
@@ -883,18 +886,35 @@ else
 end
 
 
-xlim(ax(6), [min(f0sOrig) max(f0sOrig)]);
-set(ax(6), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
-xlabel(ax(6), 'Forcing frequency (Hz)');
-ylabel(ax(6), 'rBM^*');
-title(ax(6), 'BM Compression Curves.  0 - 120 dB SPL in 20 dB steps.');
-set(ax(6), 'FontUnits','normalized');
-
 xlim(ax(5), [min(f0sOrig) max(f0sOrig)]);
-ylim(ax(5), [thresh/10 2*max(rOC(2,:))] );
 set(ax(5), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
 xlabel(ax(5), 'Forcing frequency (Hz)');
-ylabel(ax(5), 'rOC^*');
-title(ax(5), 'OC Compression Curves:  Forcing is provided by the BM oscillator dependent on f0.');
+ylabel(ax(5), 'rBM^*');
+title(ax(5), 'BM Compression Curves');
 set(ax(5), 'FontUnits','normalized');
+
+xlim(ax(4), [min(f0sOrig) max(f0sOrig)]);
+ylim(ax(4), [thresh/10 2*max(rOC(2,:))] );
+set(ax(4), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
+xlabel(ax(4), 'Forcing frequency (Hz)');
+ylabel(ax(4), 'rOC^*');
+title(ax(4), 'OC Compression Curves');
+set(ax(4), 'FontUnits','normalized');
+
+
+legend(ax(2), 'f0 = f/2', 'f0 = CF = f', 'f0 = 2f', 'rBM Threshold','Location','best');
+legend(ax(3), 'f0 = f/2', 'f0 = CF = f', 'f0 = 2f','location','best');
+
+if tcnum<5
+    legend(ax(4), '0 dB SPL', '20 dB SPL', '40 dB SPL', '60 dB SPL',...
+        '80 dB SPL', '100 dB SPL', '120 dB SPL','Location','northeast');
+    legend(ax(5), '0 dB SPL', '20 dB SPL', '40 dB SPL', '60 dB SPL',...
+        '80 dB SPL', '100 dB SPL', '120 dB SPL','Location','northeast');
+else
+    legend(ax(4), '0 dB SPL', '20 dB SPL', '40 dB SPL', '60 dB SPL',...
+        '80 dB SPL', '100 dB SPL', '120 dB SPL','Location','northwest');
+    legend(ax(5), '0 dB SPL', '20 dB SPL', '40 dB SPL', '60 dB SPL',...
+        '80 dB SPL', '100 dB SPL', '120 dB SPL','Location','northwest');
+end
+
 
