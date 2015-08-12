@@ -810,7 +810,7 @@ else
 end
 
 % Set font size of legend text
-set([hl2 hl3 hl4 hl5],'FontSize',19);
+set([hl2 hl3 hl4 hl5],'FontSize',12);
 
 
 
