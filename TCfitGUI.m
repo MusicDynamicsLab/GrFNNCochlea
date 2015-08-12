@@ -623,7 +623,7 @@ F = Pa2dB(F); % For a log-log plot.
 
 if toggleValues{4}  % If single critical oscillator
     
-    semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [thresh thresh], 'k', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k');
+    semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [thresh thresh], 'k--', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k--');
     plot(ax(3),NaN);
     
 else  % Else coupled oscillator model
@@ -631,21 +631,21 @@ else  % Else coupled oscillator model
     if toggleValues{3} % if oc==thresh
         
         if c21&&c12 % if afferent and efferent connections are both nonzero
-            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [thresh thresh], 'k', [Fref 120] , [spontOC spontOC], 'm', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k');
+            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [thresh thresh], 'k--', [Fref 120] , [spontOC spontOC], 'm', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k--');
             semilogy(ax(3), F, rBM(1,:), 'g', F, rBM(2,:), 'b', F, rBM(3,:), 'r', [Fref 120], [spontBM spontBM], 'm', 'Linewidth', 2);
         else
-            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [thresh thresh], 'k', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k');
+            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [thresh thresh], 'k--', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k--');
             semilogy(ax(3), F, rBM(1,:), 'g', F, rBM(2,:), 'b', F, rBM(3,:), 'r', 'Linewidth', 2);
         end
         
     else
         
         if c21&&c12
-            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [spontOC spontOC], 'm', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k');
-            semilogy(ax(3), F, rBM(1,:), 'g', F, rBM(2,:), 'b', F, rBM(3,:), 'r', [Fref 120], [thresh thresh], 'k', [Fref 120], [spontBM spontBM], 'm', 'Linewidth', 2);
+            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [spontOC spontOC], 'm', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k--');
+            semilogy(ax(3), F, rBM(1,:), 'g', F, rBM(2,:), 'b', F, rBM(3,:), 'r', [Fref 120], [thresh thresh], 'k--', [Fref 120], [spontBM spontBM], 'm', 'Linewidth', 2);
         else
-            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k');
-            semilogy(ax(3), F, rBM(1,:), 'g', F, rBM(2,:), 'b', F, rBM(3,:), 'r', [Fref 120], [thresh thresh], 'k', 'Linewidth', 2);
+            semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k--');
+            semilogy(ax(3), F, rBM(1,:), 'g', F, rBM(2,:), 'b', F, rBM(3,:), 'r', [Fref 120], [thresh thresh], 'k--', 'Linewidth', 2);
         end
         
     end
@@ -710,7 +710,7 @@ end
 if toggleValues{4}  % If single critical oscillator
     
     loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
-    loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(4), 'off');
+    loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k--', 'Linewidth', 2); hold(ax(4), 'off');
     loglog(ax(5), NaN);
     
 else
@@ -721,25 +721,25 @@ else
             loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(5), 'on');
             loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [spontBM spontBM], 'm', 'Linewidth', 2);hold(ax(5), 'off');
             loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
-            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2);
+            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k--', 'Linewidth', 2);
             loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [spontOC spontOC], 'm', 'Linewidth', 2); hold(ax(4), 'off');
         else
             loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);
             loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
-            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(4), 'off');
+            loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k--', 'Linewidth', 2); hold(ax(4), 'off');
         end
         
     else  % Else using BM as threshold
         
         if c21&&c12
             loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(5), 'on');
-            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2);
+            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k--', 'Linewidth', 2);
             loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [spontBM spontBM], 'm', 'Linewidth', 2);hold(ax(5), 'off');
             loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
             loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [spontOC spontOC], 'm', 'Linewidth', 2); hold(ax(4), 'off');
         else
             loglog(ax(5), f0s(f0s>0), BMcomp(f0s>0,:), 'Linewidth', 2);hold(ax(5), 'on');
-            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k', 'Linewidth', 2); hold(ax(5), 'off');
+            loglog(ax(5), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k--', 'Linewidth', 2); hold(ax(5), 'off');
             loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2);
         end
         
