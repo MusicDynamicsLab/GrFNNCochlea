@@ -766,30 +766,30 @@ set(ax(4), 'FontUnits','normalized');
 
 %% Decide what needs to be plotted based on toggle button values
 
-stringf2 = {'f0 = CF = f','f0 = f/2','f0 = 2f'};
-stringf3 = {'f0 = CF = f','f0 = f/2','f0 = 2f'};
-stringF4 = {'120 dB SPL','100 dB SPL','80 dB SPL','60 dB SPL',...
+stringL2 = {'f0 = CF = f','f0 = f/2','f0 = 2f'};
+stringL3 = {'f0 = CF = f','f0 = f/2','f0 = 2f'};
+stringL4 = {'120 dB SPL','100 dB SPL','80 dB SPL','60 dB SPL',...
     '40 dB SPL','20 dB SPL','0 dB SPL'};
-stringF5 = {'120 dB SPL','100 dB SPL','80 dB SPL','60 dB SPL',...
+stringL5 = {'120 dB SPL','100 dB SPL','80 dB SPL','60 dB SPL',...
     '40 dB SPL','20 dB SPL','0 dB SPL'};
 
 if toggleValues{3} % if oc==thresh
-    stringf2 = [stringf2 {'Threshold'}];
-    stringF4 = [stringF4 {'Threshold'}];
+    stringL2 = [stringL2 {'Threshold'}];
+    stringL4 = [stringL4 {'Threshold'}];
 else % else bm==thresh
-    stringf3 = [stringf3 {'Threshold'}];
-    stringF5 = [stringF5 {'Threshold'}];
+    stringL3 = [stringL3 {'Threshold'}];
+    stringL5 = [stringL5 {'Threshold'}];
 end
 if c21&&c12 % if afferent and efferent connections are both nonzero 
-    stringf2 = [stringf2 {'Spontaneous amp'}];
-    stringf3 = [stringf3 {'Spontaneous amp'}];
-    stringF4 = [stringF4 {'Spontaneous amp'}];
-    stringF5 = [stringF5 {'Spontaneous amp'}];
+    stringL2 = [stringL2 {'Spontaneous amp'}];
+    stringL3 = [stringL3 {'Spontaneous amp'}];
+    stringL4 = [stringL4 {'Spontaneous amp'}];
+    stringL5 = [stringL5 {'Spontaneous amp'}];
 end
 
 if toggleValues{4} % if using single oscillator model
-    legend(ax(2),stringf2,'location','best');
-    hl4 = legend(ax(4),stringF4);
+    hl2 = legend(ax(2),stringL2,'location','best');
+    hl4 = legend(ax(4),stringL4);
     
     if tcnum < 5
         set(hl4,'Location','northeast');
@@ -797,10 +797,10 @@ if toggleValues{4} % if using single oscillator model
         set(hl4,'Location','northwest');
     end
 else
-    legend(ax(2),stringf2,'location','best');
-    legend(ax(3),stringf3,'location','best');
-    hl4 = legend(ax(4),stringF4);
-    hl5 = legend(ax(5),stringF5);
+    hl2 = legend(ax(2),stringL2,'location','best');
+    hl3 = legend(ax(3),stringL3,'location','best');
+    hl4 = legend(ax(4),stringL4);
+    hl5 = legend(ax(5),stringL5);
     
     if tcnum < 5
         set([hl4,hl5],'Location','northeast');
@@ -808,6 +808,9 @@ else
         set([hl4,hl5],'Location','northwest');
     end
 end
+
+% Set font size of legend text
+set([hl2 hl3 hl4 hl5],'FontSize',19);
 
 
 
