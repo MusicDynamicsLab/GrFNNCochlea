@@ -3,12 +3,12 @@ function TCfitGUI
 % results. Change parameter values by moving the sliders or by entering
 % numbers in the text boxes.
 
-figure(999);
+figure(1);
 set(gcf, 'Visible', 'off', 'Toolbar', 'figure', 'Color', [.8 .8 .8], ...
-    'Position', [5, 5, 900 800]);
+    'Position', [5, 5, 900 800], 'Name', 'Tuning Curves');
 initialRun;
-movegui(999, 'center');
-set(999, 'Visible', 'on');
+movegui(gcf,'center');
+set(gcf, 'Visible', 'on');
 
 
 
@@ -18,35 +18,11 @@ clf
 axis off;
 
 ax1 = axes('Units', 'normalized', 'Position', [.06 .65 .5 .3]);
-ax2 = axes('Units', 'normalized', 'Position', [.63  288/800 .35 .2]);
-ax3 = axes('Units', 'normalized', 'Position', [.63   36/800 .35 .2]);
-ax4 = axes('Units', 'normalized', 'Position', [.06  288/800 .5 .2]);
-ax5 = axes('Units', 'normalized', 'Position', [.06   36/800 .5 .2]);
+ax2 = axes('Units', 'normalized', 'Position', [.63  .36 .35 .2]);
+ax3 = axes('Units', 'normalized', 'Position', [.63  .045 .35 .2]);
+ax4 = axes('Units', 'normalized', 'Position', [.06  .36 .5 .2]);
+ax5 = axes('Units', 'normalized', 'Position', [.06  .045 .5 .2]);
 ax = [ax1 ax2 ax3 ax4 ax5];
-
-xlim(ax1, [50 20000]);
-ylim(ax1, [0 100]);
-grid(ax1, 'on');
-ylabel(ax1, 'Threshold (dB SPL)');
-xlabel(ax1, 'Frequency (Hz)');
-title(ax1, 'TC Fit');
-
-xlabel(ax2, 'F (Pa)');
-ylabel(ax2, 'r* of OC oscillator');
-title(ax2, 'Steady State Amplitude Curve for OC Oscillator.');
-
-
-xlabel(ax3, 'Forcing F (Pa) = r* OC');
-ylabel(ax3, 'r* of BM oscillator');
-title(ax3, 'Steady State Amplitude Curve for BM Oscillator.');
-
-xlabel(ax4, 'f_{0} (Hz)');
-ylabel(ax4, 'rOC^*');
-title(ax4, 'OC Compression Curves: 0 - 120 dB SPL in 20 dB steps');
-
-xlabel(ax5, 'f_{0} (Hz)');
-ylabel(ax5, 'rBM^*');
-title(ax5, 'BM Compression Curves: 0 - 120 dB SPL in 20 dB steps');
 
 defaultparamsBMOC = csvread('defaultparamsBMOC.csv');
 
@@ -68,91 +44,87 @@ TCnumLim   = [1 11];
 
 %% Make text boxes and labels for parameter input
 
-% Tuning curve slider, textbox, and label
-text(.71,.62,'Tuning Curve:','HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
-handles.sliderTC = uicontrol('Style', 'slider', 'Min', 1, 'Max', 11, 'Value', tcnum, 'SliderStep', [.1 .1], ...
-    'Min', TCnumLim(1), 'Max', TCnumLim(2), 'Units', 'normalized', 'Position', [.71 .59 .222 .025]);
-handles.textTC = uicontrol('Style','edit', 'String', tcnum,...
-    'FontSize',12,'FontUnits','normalized','Units', 'normalized','Position', [.81 .62 .046 .03]);
-
 % Panel for parameter input
-hp1 = uipanel('Title','Parameters','FontSize',11,'FontName','Helvetica',...
-    'BackgroundColor',[.8 .8 .8],'Position',[.67 .66 .28 .3]);
-axes('Units','normalized','Position',get(hp1,'Position'))
-axis off
+hp1 = uipanel('Title','Parameters',...
+    'FontSize',11,'FontName','Helvetica','FontUnits','normalized',...
+    'BackgroundColor',[.8 .8 .8],'Position',[.71 .66 .28 .3]);
+axes('parent', hp1,'position',[0 0 1 1], 'visible', 'off');
+
+% Label which layer the textboxes correspond to
+text(.55,.96,'BM','HorizontalAlignment','center','VerticalAlignment','bottom',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
+text(.85,.96,'OC','HorizontalAlignment','center','VerticalAlignment','bottom',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
 
 % Label and textbox for alpha_BM
-text(.18,.83,'$$\alpha_{bm}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
+text(.45,.89,'alpha:','HorizontalAlignment','right','VerticalAlignment','middle',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
 handles.alphabm = uicontrol('Parent',hp1,'Style','edit', 'String', alphabm,...
-    'FontSize',12,'Units', 'normalized','Position', [.19 .83 .2 .13]);
+    'FontSize',12,'FontUnits','normalized','Units','normalized','Position', [.45 .83 .2 .13]);
 % Label and textbox for beta_BM
-text(.18,.68,'$$\beta_{bm}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
+text(.45,.74,'beta:','HorizontalAlignment','right','VerticalAlignment','middle',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
 handles.betabm = uicontrol('Parent',hp1,'Style','edit', 'String', beta1bm,...
-    'FontSize',12,'Units', 'normalized','Position', [.19 .68 .2 .13],'enable','off');
+    'FontSize',12,'Units', 'normalized','FontUnits','normalized','Position', [.45 .68 .2 .13],'enable','off');
 % Label and textbox for delta_BM
-text(.18,.55,'$$\delta_{bm}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
+text(.45,.59,'delta:','HorizontalAlignment','right','VerticalAlignment','middle',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
 handles.deltabm = uicontrol('Parent',hp1,'Style','edit', 'String', delta1bm,...
-    'FontSize',12,'Units', 'normalized','Position', [.19 .53 .2 .13],'enable','off');
-% Label and textbox for c12
-text(.18,.4,'$$c_{12}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
-handles.c12 = uicontrol('Parent',hp1,'Style','edit', 'String', c12,...    
-    'FontSize',12,'Units', 'normalized','Position', [.19 .38 .2 .13]);
+    'FontSize',12,'Units', 'normalized','FontUnits','normalized','Position', [.45 .53 .2 .13],'enable','off');
 
 % Label and textbox for alpha_OC
-text(.54,.82,'$$\alpha_{oc}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
 handles.alphaoc = uicontrol('Parent',hp1,'Style','edit', 'String', alphaoc,...
-    'FontSize',12,'Units', 'normalized','Position', [.55 .83 .22 .13]);
+    'FontSize',12,'Units', 'normalized','FontUnits','normalized','Position', [.76 .83 .2 .13]);
 % Label and textbox for beta_OC
-text(.54,.67,'$$\beta_{oc}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
 handles.betaoc = uicontrol('Parent',hp1,'Style','edit', 'String', beta1oc,...
-    'FontSize',12,'Units', 'normalized','Position', [.55 .68 .22 .13]);
+    'FontSize',12,'Units', 'normalized','FontUnits','normalized','Position', [.76 .68 .2 .13]);
 % Label and textbox for delta_OC
-text(.54,.52,'$$\delta_{oc}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
 handles.deltaoc = uicontrol('Parent',hp1,'Style','edit', 'String', delta1oc,...
-    'FontSize',12,'Units', 'normalized','Position', [.55 .53 .22 .13]);
+    'FontSize',12,'Units', 'normalized','FontUnits','normalized','Position', [.76 .53 .2 .13]);
+
+% Label and textbox for c12
+text(.45,.45,'c12:','HorizontalAlignment','right','VerticalAlignment','middle',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
+handles.c12 = uicontrol('Parent',hp1,'Style','edit', 'String', c12,...    
+    'FontSize',12,'Units', 'normalized','FontUnits','normalized','Position', [.45 .38 .2 .13]);
 % Label and texbox for c21
-text(.54,.37,'$$c_{21}:$$','Interpreter','Latex',...
-    'HorizontalAlignment','right','VerticalAlignment','baseline',...
-    'Units','normalized','FontSize',15)
+text(.76,.45,'c21:','HorizontalAlignment','right','VerticalAlignment','middle',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
 handles.c21 = uicontrol('Parent',hp1,'Style','edit', 'String', c21,...
-    'FontSize',12,'Units', 'normalized','Position', [.55 .38 .22 .13]);
+    'FontSize',12,'Units', 'normalized','FontUnits','normalized','Position', [.76 .38 .2 .13]);
 
 % Label and textbox for threshold
-text(.3,.08,'Threshold:','HorizontalAlignment','right',...
-    'VerticalAlignment','baseline','Units','normalized','FontSize',15)
+text(.05,.83,'Threshold:','HorizontalAlignment','left',...
+    'VerticalAlignment','middle','Units','normalized','FontSize',12,'FontUnits','normalized')
 handles.thresh = uicontrol('Parent', hp1, 'Style','edit', 'String', thresh,...
-    'FontSize',12,'Units', 'normalized', 'HorizontalAlignment', 'center',...
-    'Position', [.31 .05 .22 .13]);
+    'FontSize',12,'Units', 'normalized', 'HorizontalAlignment', 'center',...    
+    'Position', [.05 .67 .2 .13],'FontUnits','normalized');
 
 % Pushbutton controls for saving as default parameters and choosing c12
 % value
 handles.buttonSaveAsDefault = uicontrol('Parent', hp1, 'Style', 'pushbutton', 'String', {'Save as Default'},...
     'TooltipString', ['Save the current parameters' char(10)...
     'as the default parameters in' char(10) 'defaultparamsBMOC.csv'],...
-    'FontUnits','normalized','Units', 'normalized',  'Position', [.58 .02 .4 .18]);
+    'FontUnits','normalized','Units', 'normalized',  'Position', [.5 .2 .4 .18]);
 handles.buttonChoosec12 = uicontrol('Parent', hp1, 'Style', 'pushbutton', 'String', 'Choose c12',...
     'FontUnits','normalized','Units', 'normalized',...    
     'TooltipString', ['Set value of c12 to make spontaneous' char(10) 'amplitude equal to half the threshold.'],...
-    'Position', [.10 .2 .28 .15]);
+    'Position', [0 .37 .35 .15]);
+
+% Tuning curve slider, textbox, and label
+% axes('position',[.8 .62 .05 .02],'Visible','off');
+text(.33,.13,'Tuning Curve:','HorizontalAlignment','right','VerticalAlignment','baseline',...
+    'FontSize',12,'FontUnits','normalized','Units','normalized')
+handles.textTC = uicontrol('Style','edit', 'String', tcnum,...
+    'FontSize',12,'FontUnits','normalized','Units','normalized','Position', [.805 .69 .046 .03]);
+handles.sliderTC = uicontrol('Style', 'slider', 'Min', 1, 'Max', 11, 'Value', tcnum, 'SliderStep', [.1 .4], ...
+    'Min', TCnumLim(1), 'Max', TCnumLim(2), 'Units', 'normalized', 'Position', [.72 .66 .15 .025]);
+
 
 % Create panel for toggle controls
-hp2 = uipanel('Title','Toggles','FontSize',11,'FontName','Helvetica',...
-    'BackgroundColor',[.8 .8 .8],'Position',[.57 .66 .09 .3]);
+hp2 = uipanel('Title','Toggles',...
+    'FontSize',11,'FontName','Helvetica','FontUnits','normalized',...
+    'BackgroundColor',[.8 .8 .8],'Position',[.57 .66 .13 .3]);
 axes('Units','normalized','Position',get(hp2,'Position'))
 axis off
 
@@ -164,12 +136,12 @@ handles.toggleMEF = uicontrol('Parent',hp2,'Style','togglebutton', 'String','MEF
 handles.toggleFS = uicontrol('Parent',hp2,'Style','togglebutton', 'String','Freq Scaling',...
     'TooltipString', 'Turn ON/OFF Frequency Scaling',...
     'Value', 0,'FontUnits','normalized','Units', 'normalized', 'Position', [.03 .55 .95 .15]);
-handles.toggleThresh = uicontrol('Parent',hp2,'Style','togglebutton', 'String','OC==thresh',...
+handles.toggleThresh = uicontrol('Parent',hp2,'Style','togglebutton', 'String','Thresh: OC',...
     'TooltipString', ['ON = use OC amplitude as threshold ' char(10) 'OFF = use BM amplitude as threshold'],...
     'Value', 1,'FontUnits','normalized','Units', 'normalized', 'Position', [.03 .3 .95 .15]);
-handles.toggleSingle = uicontrol('Parent',hp2,'Style','togglebutton', 'String','Single Osc',...
-    'TooltipString', ['ON = single layer model ' char(10) 'OFF = two layer model'],...
-    'Value', 0,'FontUnits','normalized','Units', 'normalized', 'Position', [.03 .05 .95 .15]);
+handles.toggleSingle = uicontrol('Parent',hp2,'Style','togglebutton', 'String','Two Layer',...
+    'TooltipString', ['ON = two layer model' char(10) 'OFF = single layer model'],...
+    'Value', 1,'FontUnits','normalized','Units', 'normalized', 'Position', [.03 .05 .95 .15]);
 
 
 %% Set callback functions
@@ -186,7 +158,7 @@ set(handles.buttonChoosec12,    'Callback', {@choosec12_Callback, handles, ax});
 set(handles.toggleGroup,        'Callback', {@toggle_Callback,handles,ax});
 
 hold off
-plotTC(tcnum, alphabm, beta1bm, delta1bm, alphaoc, beta1oc, delta1oc, c21, c12, thresh, {1, 0, 1, 0}, ax);
+plotTC(tcnum, alphabm, beta1bm, delta1bm, alphaoc, beta1oc, delta1oc, c21, c12, thresh, {1, 0, 1, 1}, ax);
 
 %% Toggle pushbutton callback function
 function toggle_Callback(~, ~, handles, ax)
@@ -197,7 +169,7 @@ freqScaling    = get(handles.toggleFS, 'Value');
 threshOC       = get(handles.toggleThresh, 'Value');
 singleCritical = get(handles.toggleSingle, 'Value');
 
-if singleCritical
+if ~singleCritical
     if freqScaling
         params = defaultparamsBMOC(37:45,tcnum);
     else
@@ -253,7 +225,7 @@ params = str2double(get(handles.textGroup, 'String'));
 
 tcnum  = str2double(get(handles.textTC, 'String'));
 
-if singleCritical
+if ~singleCritical
     if freqScaling
         defaultparamsBMOC(37:45,tcnum) = params;
     else
@@ -286,7 +258,7 @@ function choosec12_Callback(~, ~, handles, ax)
 
 singleCritical = get(handles.toggleSingle, 'Value');
 
-if ~singleCritical
+if singleCritical
     
     params = str2double(get(handles.textGroup, 'String'));
     
@@ -313,21 +285,23 @@ if ~singleCritical
 end
 
 
-%%  Tuning curve callback function
+%% Tuning curve callback function
 function Callback_TC(source, ~, handles, ax)
 
 if strcmp(get(source,'Style'),'edit')
-    tcnum = str2double(get(source,'String'));
+    tcnum = round(str2double(get(source,'String')));    
+    set(handles.textTC, 'String', num2str(tcnum));
     set(handles.sliderTC, 'Value', tcnum)
 else
-    tcnum = get(source,'Value');
+    tcnum = round(get(source,'Value'));
+    set(handles.sliderTC, 'Value', tcnum);
     set(handles.textTC,  'String', num2str(tcnum));
 end
 
 defaultparamsBMOC = csvread('defaultparamsBMOC.csv');
 toggleValues      = get(handles.toggleGroup, 'Value');
 
-if toggleValues{4}
+if ~toggleValues{4}
     if toggleValues{2}
         params = defaultparamsBMOC(37:45,tcnum);
     else
@@ -367,7 +341,7 @@ plotTC(tcnum, inputs{:}, toggleValues, ax)
 
 
 
-% =========================================================================
+%% Text input callback function
 function text_Callback(~, ~, handles, ax)
 
 toggleValues    = get(handles.toggleGroup, 'Value');
@@ -377,7 +351,7 @@ params = num2cell(parameterValues);
 plotTC(tcnum, params{:}, toggleValues, ax)
 
 
-% =========================================================================
+%% Plotting tuning curves function
 function plotTC(tcnum, alphabm, beta1bm, delta1bm, alphaoc, beta1oc, delta1oc, c21, c12, thresh, toggleValues, ax)
 
 % Load the Empirical Tuning Curve data.
@@ -409,7 +383,7 @@ pAt0dB = dB2Pa( MEFdBgain( [f-1 f f+1] ));
 pAt0dB = pAt0dB(2);
 
 
-if toggleValues{4}  % If single critical model
+if ~toggleValues{4}  % If single critical model
     
     if toggleValues{2}  % If frequency scaling
         F = thresh/c21*sqrt((alphaoc+beta1oc*thresh^2)^2 + (omega/f + delta1oc*thresh^2).^2);
@@ -486,7 +460,7 @@ end
 FStable   = NaN(1,length(omega));
 FUnstable = NaN(3,length(omega));
 
-if toggleValues{4}  % Single critical model
+if ~toggleValues{4}  % Single critical model
     
     FStable = F;
     
@@ -551,9 +525,10 @@ semilogx(ax(1), f0, LstimUnstable, 'Color', [.8 .2 .8], 'LineWidth', 2, 'Marker'
 xlim(ax(1), [50 30000]);
 ylim(ax(1), [0 90]);
 grid(ax(1), 'on');
-ylabel(ax(1),'Threshold (dB SPL)');
-xlabel(ax(1),'Forcing frequency (Hz)');
-title(ax(1), ['TC ' num2str(tcnum) ' Fit  with  Tip = (' num2str(f) ', ' num2str(LstimStable(idxcf)) ')']);
+ylabel(ax(1),'Threshold (dB SPL)','FontUnits','normalized');
+xlabel(ax(1),'Forcing frequency (Hz)','FontUnits','normalized');
+title(ax(1), ['TC ' num2str(tcnum) ' Fit  with  Tip = (' num2str(f) ', ' num2str(LstimStable(idxcf)) ')'],...
+        'FontUnits','normalized');
 set(ax(1), 'FontUnits','normalized');
 hold(ax(1), 'off');
 
@@ -579,7 +554,7 @@ for f0 = threef0
     rstarbm = NaN(size(F));
     rstaroc = NaN(size(F));
     for nF = 1:length(F)
-        if toggleValues{4}  % If single critical model
+        if ~toggleValues{4}  % If single critical model
             if toggleValues{2}  % If frequency scaling
                 temp = sqrt(roots([beta1oc^2+delta1oc^2,...
                     2*(alphaoc*beta1oc+delta1oc*2*pi*(f-f0)/f),...
@@ -627,7 +602,7 @@ end
 F = Pa2dB(F); % For a log-log plot.
 %F_rBM_at_rOCthreshold(:,1) = Pa2dB(F_rBM_at_rOCthreshold(:,1));
 
-if toggleValues{4}  % If single critical oscillator
+if ~toggleValues{4}  % If single critical oscillator
     
     semilogy(ax(2), F, rOC(1,:), 'g', F, rOC(2,:), 'b', F, rOC(3,:), 'r', [Fref 120], [thresh thresh], 'k--', 'Linewidth', 2); %, [0 max(F)] , [rbm rbm], 'k--');
     plot(ax(3),NaN);
@@ -658,22 +633,29 @@ else  % Else coupled oscillator model
     
 end
 
-xlabel(ax(2), 'Forcing F (dB SPL)');
-ylabel(ax(2), 'r* of OC oscillator');
-title(ax(2), 'Steady State Amplitude Curve for OC Oscillator.');
+xlabel(ax(2), 'Forcing F (dB SPL)','FontUnits','normalized');
+ylabel(ax(2), 'r_{OC}^*','FontUnits','normalized');
+title(ax(2), 'Steady State Amplitude Curve for OC Oscillator.',...
+    'FontUnits','normalized');
 set(ax(2), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
 set(ax(2), 'FontUnits','normalized');
+ax2ylim = get(ax(2), 'YLim');
+if exist('rOC','var') && ~isnan(rOC(1,1))
+    ylim(ax(2), [rOC(1,1)/10 ax2ylim(2)]);
+end
 
 grid(ax(3), 'on');
 
-xlabel(ax(3), 'Forcing F (dB SPL)');
-ylabel(ax(3), 'r* of BM oscillator');
-title(ax(3), 'Steady State Amplitude Curve for BM Oscillator.');
+xlabel(ax(3), 'Forcing F (dB SPL)','FontUnits','normalized');
+ylabel(ax(3), 'r_{BM}^*','FontUnits','normalized');
+title(ax(3), 'Steady State Amplitude Curve for BM Oscillator.',...
+    'FontUnits','normalized');
 set(ax(3), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
 set(ax(3), 'FontUnits','normalized');
-
-
-
+ax3ylim = get(ax(3), 'YLim');
+if exist('rBM', 'var') && ~isnan(rBM(1,1))
+    ylim(ax(3), [rBM(1,1)/10 ax3ylim(2)]);
+end
 
 %% OC & BM Compression Curves 
 
@@ -692,7 +674,7 @@ OCcomp = zeros(length(W),length(F));
 
 for nF = 1:length(F)
     for nW = 1:length(W)
-        if toggleValues{4}  % If single critical oscillator
+        if ~toggleValues{4}  % If single critical oscillator
             temp = sqrt(roots([beta1oc^2+delta1oc^2,...
                 2*(alphaoc*beta1oc+delta1oc*W(nW)),...
                 alphaoc^2+W(nW)^2,...
@@ -713,7 +695,7 @@ for nF = 1:length(F)
     end
 end
 
-if toggleValues{4}  % If single critical oscillator
+if ~toggleValues{4}  % If single critical oscillator
     
     loglog(ax(4), f0s(f0s>0), OCcomp(f0s>0,:), 'Linewidth', 2); hold(ax(4), 'on');
     loglog(ax(4), [min(f0sOrig) max(f0sOrig)], [thresh thresh], 'k--', 'Linewidth', 2); hold(ax(4), 'off');
@@ -756,67 +738,38 @@ end
 
 xlim(ax(5), [min(f0sOrig) max(f0sOrig)]);
 set(ax(5), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
-xlabel(ax(5), 'Forcing frequency (Hz)');
-ylabel(ax(5), 'rBM^*');
-title(ax(5), 'BM Compression Curves');
+xlabel(ax(5), 'Forcing frequency (Hz)','FontUnits','normalized');
+ylabel(ax(5), 'r_{BM}^*','FontUnits','normalized');
+title(ax(5), 'BM Compression Curves','FontUnits','normalized');
 set(ax(5), 'FontUnits','normalized');
 
 xlim(ax(4), [min(f0sOrig) max(f0sOrig)]);
 
 ylim(ax(4), [thresh/10 2*max(rOC(1,:))] );
 set(ax(4), 'XGrid', 'on', 'YGrid', 'on', 'YMinorGrid', 'off');
-xlabel(ax(4), 'Forcing frequency (Hz)');
-ylabel(ax(4), 'rOC^*');
-title(ax(4), 'OC Compression Curves');
+xlabel(ax(4), 'Forcing frequency (Hz)','FontUnits','normalized');
+ylabel(ax(4), 'r_{OC}^*','FontUnits','normalized');
+title(ax(4), 'OC Compression Curves','FontUnits','normalized');
 set(ax(4), 'FontUnits','normalized');
 
 %% Decide what needs to be plotted based on toggle button values
 
+stringL1 = {'120','100','80','60','40','20','0dB','thresh'};
 stringL2 = {'f0 = CF = f','f0 = f/2','f0 = 2f'};
-stringL3 = {'f0 = CF = f','f0 = f/2','f0 = 2f'};
-stringL4 = {'120 dB SPL','100 dB SPL','80 dB SPL','60 dB SPL',...
-    '40 dB SPL','20 dB SPL','0 dB SPL'};
-stringL5 = {'120 dB SPL','100 dB SPL','80 dB SPL','60 dB SPL',...
-    '40 dB SPL','20 dB SPL','0 dB SPL'};
-
-if toggleValues{3} % if oc==thresh
-    stringL2 = [stringL2 {'Threshold'}];
-    stringL4 = [stringL4 {'Threshold'}];
-else % else bm==thresh
-    stringL3 = [stringL3 {'Threshold'}];
-    stringL5 = [stringL5 {'Threshold'}];
-end
+    
 if c21&&c12 % if afferent and efferent connections are both nonzero 
-    stringL2 = [stringL2 {'Spontaneous amp'}];
-    stringL3 = [stringL3 {'Spontaneous amp'}];
-    stringL4 = [stringL4 {'Spontaneous amp'}];
-    stringL5 = [stringL5 {'Spontaneous amp'}];
+    stringL1 = [stringL1 {'Spont Amp'}];
 end
 
-if toggleValues{4} % if using single oscillator model
-    hl2 = legend(ax(2),stringL2,'location','best');
-    hl4 = legend(ax(4),stringL4);
-    
-    if tcnum < 5
-        set(hl4,'Location','northeast');
-    else
-        set(hl4,'Location','northwest');
-    end
-else
-    hl2 = legend(ax(2),stringL2,'location','best');
-    hl3 = legend(ax(3),stringL3,'location','best');
-    hl4 = legend(ax(4),stringL4);
-    hl5 = legend(ax(5),stringL5);
-    
-    if tcnum < 5
-        set([hl4,hl5],'Location','northeast');
-    else
-        set([hl4,hl5],'Location','northwest');
-    end
-end
+hl2 = legend(ax(2),stringL2,'Orientation', 'horizontal','fontsize', 12,...
+    'units', 'normalized');
+hl4 = legend(ax(4),stringL1,'Orientation', 'horizontal','fontsize', 12,...
+    'units', 'normalized');
 
-% Set font size of legend text
-set([hl2 hl3 hl4 hl5],'FontSize',12);
+% Set position, orientation of legends 
+temp2 = get(hl2, 'Position'); hl2size = temp2(3:4);
+temp4 = get(hl4, 'Position'); hl4size = temp4(3:4);
 
-
+set(hl4, 'Position', [.02 .28 hl4size(:)'])
+set(hl2, 'Position', [.7 .28 hl2size(:)'])
 
