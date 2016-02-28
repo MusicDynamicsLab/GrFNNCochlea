@@ -1,15 +1,11 @@
 %% Make a cochlea network =====================================================
 n1 = networkMake(1, 'hopf', -500, -1000000, 0, 0, 0, 0.0, ...
-                    'log', 30, 10000, 831, 'channel', 1, ...
-                    'display', 200, 'save', 1);
+                    'log', 30, 10000, 831, ...
+                    'display', 200, 'save', 1, 'znaught', 0);
+                
 n2 = networkMake(2, 'hopf',   -0,   -40000, 0, 0, 0, 0.0, ...
                     'log', 30, 10000, 831, ...
-                    'display', 200, 'save', 1);
-
-n1.z0 = 0*n1.z;
-n2.z0 = .025 + 0*n2.z;
-n1.z  = 0*n1.z;
-n2.z  = .025 + 0*n2.z;
+                    'display', 200, 'save', 1, 'znaught', 0.025);
 
 %% Make a stimulus ============================================================
 F = dB2Pa(20);
@@ -17,15 +13,16 @@ freqs = 1000;
 index = freqToIndex(n1, freqs);
 freqs = n1.f(index);
 
-s = stimulusMake('fcn', [0 .10], 100000, {'exp'}, freqs, F, 0, ...
+s = stimulusMake(1, 'fcn', [0 .10], 100000, {'exp'}, freqs, F, 0, ...
                  'ramp', 0.010, 1, 'display', 200);
 
 stim_rms = rms(s.x);
 ratio = (F/sqrt(2))/stim_rms;
 s.x = ratio*s.x;
 
-s.x=midearfilt(s.x,s.fs);
+s.x = midearfilt(s.x,s.fs);
 
+n1 = connectAdd(s, n1, 1);
 %%
 abm  = -412; aoc  =      0;
 b1bm = 0;    b1oc =  -40e3;
@@ -48,8 +45,8 @@ n1    = connectAdd(n2, n1, bm2oc, 'weight', c12, 'type', '1freq');
 
 %% Fitted cochlear params 
 n1.w  = 1;
-n1.a  = abm + i*2*pi.*n1.f;
-n2.a  = aoc + i*2*pi.*n1.f;
+n1.a  = abm + 1i*2*pi.*n1.f;
+n2.a  = aoc + 1i*2*pi.*n1.f;
 n2.b1 = b1oc;
 n2.b2 = b2oc;
 n1.con{1}.w = (real(n1.a)./n2.con{1}.w(end)) .* (real(n2.a) +  real(n2.b1) * (0.50*r_thresh).^2);
@@ -58,7 +55,7 @@ n1.con{1}.w = (real(n1.a)./n2.con{1}.w(end)) .* (real(n2.a) +  real(n2.b1) * (0.
 M = modelMake(@zdot, @cdot, s, n1, n2);
 
 tic;
-M = odeRK4fs(M, s);
+M = odeRK4fs(M);
 clc; toc;
 
 %%
