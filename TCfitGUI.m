@@ -522,12 +522,14 @@ semilogx(ax(1), f0, thresholds, 'b.-', 'Linewidth', 2);  hold(ax(1), 'on');
 semilogx(ax(1), f0, LstimStable,   'Color', [.2 .8 .2], 'LineWidth', 2, 'Marker', '.');
 semilogx(ax(1), f0, LstimUnstable, 'Color', [.8 .2 .8], 'LineWidth', 2, 'Marker', '.');
 
+meanSquareError = mean((thresholds-LstimStable).^2);
+
 xlim(ax(1), [50 30000]);
 ylim(ax(1), [0 90]);
 grid(ax(1), 'on');
 ylabel(ax(1),'Threshold (dB SPL)','FontUnits','normalized');
 xlabel(ax(1),'Forcing frequency (Hz)','FontUnits','normalized');
-title(ax(1), ['TC ' num2str(tcnum) ' Fit  with  Tip = (' num2str(f) ', ' num2str(LstimStable(idxcf)) ')'],...
+title(ax(1), ['TC ' num2str(tcnum) ' Fit  with  Tip = (' num2str(f) ', ' num2str(LstimStable(idxcf)) '), RMSE = ' num2str(sqrt(meanSquareError)) ' dB'],...
         'FontUnits','normalized');
 set(ax(1), 'FontUnits','normalized');
 hold(ax(1), 'off');
