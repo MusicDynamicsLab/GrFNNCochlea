@@ -367,13 +367,17 @@ semilogx(ax(1), f0, LstimStable,   'Color', [.2 .8 .2], 'LineWidth', 2, 'Marker'
 semilogx(ax(1), f0, LstimUnstable, 'Color', [.8 .2 .8], 'LineWidth', 2, 'Marker', '.')
 
 meanSquareError = mean((thresholds-LstimStable).^2);
+Qdata=computeQerb(f0,thresholds,cf);
+Qmodel=computeQerb(f0,LstimStable,cf);
 
 xlim(ax(1), [50 30000])
 ylim(ax(1), [0 90])
 grid(ax(1), 'on')
 ylabel(ax(1),'Threshold (dB SPL)','FontUnits','normalized')
 xlabel(ax(1),'Forcing frequency (Hz)','FontUnits','normalized')
-title(ax(1), ['TC ' num2str(tcnum) ' Fit  with  Tip = (' num2str(f) ', ' num2str(LstimStable(idxcf)) '), RMSE = ' num2str(sqrt(meanSquareError)) ' dB'],...
+% title(ax(1), ['TC ' num2str(tcnum) ' Fit  with  Tip = (' num2str(f) ', ' num2str(LstimStable(idxcf)) '), RMSE = ' num2str(sqrt(meanSquareError)) ' dB'],...
+%         'FontUnits','normalized')
+title(ax(1), ['TC ' num2str(tcnum) ' Fit, Q_{data} = ' num2str(Qdata) ', Q_{model} = ' num2str(Qmodel) ', RMSE = ' num2str(sqrt(meanSquareError)) ' dB'],...
         'FontUnits','normalized')
 set(ax(1), 'FontUnits','normalized')
 hold(ax(1), 'off')
