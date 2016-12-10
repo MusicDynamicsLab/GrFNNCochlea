@@ -68,7 +68,7 @@ end
 % M = odeRK4fs(M);
 
 %%
-clc; toc
+toc
 
 %%
 figure
