@@ -2,8 +2,8 @@ function [rStarBM, rStarOC, psiStarBM, psiStarOC, stability, stabType] ...
   = rStarCochlea(alphaBM, alphaOC, beta1OC, delta1OC, F, c21, c12, ...
   Omega, All)
 %%
-% [rStarBM, rStarOC, psiStarBM, psiStarOC] = ...
-%   rStarCochlea(alphaBM, alphaOC, beta1OC, delta1OC, F, c21, c12, ...
+% [rStarBM, rStarOC, psiStarBM, psiStarOC, stability, stabType] = 
+%   rStarCochlea(alphaBM, alphaOC, beta1OC, delta1OC, F, c21, c12,
 %   Omega, All)
 %
 % Finds rBM*, rOC*, psiBM*, psiOC*, stability (1 or 0), and stability
@@ -21,11 +21,11 @@ function [rStarBM, rStarOC, psiStarBM, psiStarOC, stability, stabType] ...
 % 1 = unstable spiral, 0 = saddle point
 
 %% Equation
-% $$\frac{1}{f}\dot{z}_{bm} = z_{bm}\left(\alpha_{bm} +
-% 2\pi\textrm{i}\right) + Fe^{\textrm{i}2\pi f_0t} + c_{12}z_{oc}$$
+% $$\dot{z}_{bm} = z_{bm}\left(\alpha_{bm} +
+% \textrm{i} 2\pi f\right) + Fe^{\textrm{i}2\pi f_0t} + c_{12}z_{oc}$$
 % 
-% $$\frac{1}{f}\dot{z}_{oc} = z_{oc}\left(\alpha_{oc} +
-% 2\pi\textrm{i} + \left(\beta_{1oc} +
+% $$\dot{z}_{oc} = z_{oc}\left(\alpha_{oc} +
+% \textrm{i} 2\pi f + \left(\beta_{1oc} +
 % \textrm{i}\delta_{1oc}\right)|z_{oc}|^2\right) + c_{21}z_{bm}$$
 %
 % where $z_x = r_xe^{\textrm{i}\phi_x}$, $\psi_{bm} = \phi_{bm} - 

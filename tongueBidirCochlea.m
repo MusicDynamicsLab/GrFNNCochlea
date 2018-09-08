@@ -67,9 +67,9 @@ else
   caxis([0 7])
 end
 
-if rocThr % if threshold roc is set
+if rocThr > 0 % if threshold roc is set
   hold on
-  [~,h] = contour(f0,FdBSPL,RSTAROC,rocThr,'r'); % draw contour
+  [~,h] = contour(f0,FdBSPL,RSTAROC,[1 1]*rocThr,'r'); % draw contour
   set(h,'ShowText','on') % annotate with threshold value
   hold off
 end
