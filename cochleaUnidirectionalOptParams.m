@@ -1,20 +1,34 @@
 %% Define cochlear parameters =================================================
-abm  = -412; aoc  =      0;
-b1bm = 0;    b1oc =  -408160;
+% abm  = -412;
+aoc  = 0;
+b1bm = 0;
+% b1oc = -408160;
 b2bm = 0;    b2oc =      0;
 d1bm = 0;    d1oc =      0;
 d2bm = 0;    d2oc =      0;
 ebm  = 0;    eoc  =      0;
 
+%% Get optimized abm and b1oc
+
+load interpedParams.mat
+lowFreq       = 60;
+highFreq      = 20000;
+lengthNetwork = 831;
+[x, index] = unique(interpedAlphaCFs); 
+abm = interp1(x, interpedAlphas(index), logspace(log10(lowFreq), log10(highFreq), lengthNetwork), 'spline', 'extrap')';
+
+[x, index] = unique(interpedBetaCFs); 
+b1oc = interp1(x, interpedBetas(index), logspace(log10(lowFreq), log10(highFreq), lengthNetwork), 'spline', 'extrap')';
+
 c21 = 197960;
 
 %% Make a cochlea network =====================================================
 n1 = networkMake(1, 'hopf', abm, b1bm, b2bm, d1bm, d2bm, ebm, ...
-                    'log', 60, 20000, 831, ...
+                    'log', lowFreq, highFreq, lengthNetwork, ...
                     'display', 50, 'save', 1, 'znaught', 0, 'noScale');
                 
 n2 = networkMake(2, 'hopf', aoc, b1oc, b2oc, d1oc, d2oc, eoc, ...
-                    'log', 60, 20000, 831, ...
+                    'log', lowFreq, highFreq, lengthNetwork, ...
                     'display', 50, 'save', 1, 'znaught', 0, 'noScale');
 
 %% Make a stimulus ============================================================
